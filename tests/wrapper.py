@@ -15,6 +15,11 @@ def my_func_options(param):
     print(param)
 
 
+@wrap
+def my_func(param='ee', *, param2='ff'):
+    print(param)
+
+
 def test():
     my_func(3)
     my_func('test')

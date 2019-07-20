@@ -46,10 +46,10 @@ class Wrapper:
     def __init__(self, func, options: Options):
         self.options = options
         self.func = func
-        state.definitions.add(self.func, self.options)
+        self.key = state.definitions.add(self.func, self.options)
 
     def __call__(self, *args, **kwargs):
-        print(self.options, ':')
+        print(self.options, self.key, ':')
         self.func(*args, **kwargs)
 
 

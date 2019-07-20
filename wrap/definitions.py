@@ -42,12 +42,12 @@ class Definitions:
 
         return keyed, free
 
-    def add(self, func: Callable, options: Options):
+    def add(self, func: Callable, options: Options) -> str:
         if options.key is not None:
             definition = Definition.create(options.key, func)
             self.keyed[definition.key] = definition
             self.save()
-            return
+            return definition.key
 
         assert options.add_key is False
 
@@ -63,10 +63,12 @@ class Definitions:
             if definition.name not in self.free:
                 definition.key = definition.name
             else:
-                definition.key = definition.name + random_string(5)
+                definition.key = definition.name + ":" + random_string(5)
 
         self.free[definition.key] = definition
         self.save()
+
+        return definition.key
 
     def save(self):
         path = str(self.path)
