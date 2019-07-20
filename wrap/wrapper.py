@@ -2,25 +2,27 @@ import types
 from pathlib import Path
 from typing import Callable, Optional, Union
 
-from wrap.definitions import Definition
+from wrap.definitions import Definition, Definitions
 from wrap.options import Options
 
 default_options = Options.default()
 
 
-class Configs:
+class State:
     def __init__(self, log_dir: Path):
         self.log_dir: Path = log_dir
         if not self.log_dir.exists():
             self.log_dir.mkdir(parents=True)
-        self.definitions_path = str(self.log_dir / 'definitions.json')
+        self.definitions = Definitions(self.log_dir / 'definitions.json')
 
 
-configs: Optional[Configs] = None
+state: Optional[State] = None
 
 
 def init_wrap(log_dir: Union[str, None, Path]):
-    global configs
+    global state
+
+    assert state is None
 
     if log_dir is not None:
         if type(log_dir) == Path:
@@ -28,7 +30,7 @@ def init_wrap(log_dir: Union[str, None, Path]):
         else:
             log_dir = Path(log_dir)
 
-    configs = Configs(log_dir)
+    state = State(log_dir)
 
 
 class Wrapping:
@@ -44,12 +46,7 @@ class Wrapper:
     def __init__(self, func, options: Options):
         self.options = options
         self.func = func
-        self.log_definition()
-
-    def log_definition(self):
-        definition = Definition(self.func)
-        with open(configs.definitions_path, "a") as f:
-            f.write(definition.json_str() + '\n')
+        state.definitions.add(self.func, self.options)
 
     def __call__(self, *args, **kwargs):
         print(self.options, ':')

@@ -3,11 +3,17 @@ from typing import Optional
 
 
 class Options:
-    def __init__(self, *, signature: Optional[bool] = None):
+    def __init__(self, *,
+                 key: Optional[str] = None,
+                 signature: Optional[bool] = None):
+        self.key = key
+
         # Log call signature
         self.signature = signature
 
         # These are more like TODO items
+        # Add ids to wrappers so that we can identify them as code changes
+        self.add_key = False
         # Log dimensions if they are tensors
         self.dimensions = True
         # Log every nth call
@@ -22,8 +28,6 @@ class Options:
         self.strings_limit = 10
         # Pickle and save objects
         self.pickle = True
-        # Add ids to wrappers so that we can identify them as code changes
-        self.add_ids = True
 
         self._options = [
             'signature',
@@ -34,12 +38,12 @@ class Options:
             'list_limit',
             'strings_limit',
             'pickle',
-            'add_ids'
+            'add_key'
         ]
 
     @staticmethod
     def default():
-        return Options(signature=True)
+        return Options(key=None, signature=True)
 
     def clone(self):
         return copy.deepcopy(self)
