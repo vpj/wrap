@@ -8,10 +8,10 @@
 
 ### Logging
 
-* Log frequency
-* Log simple objects
+* Log lists/tuples/dicts
 * Pickle large objects
 * Handle classes
+* Handle async functions
 
 ### Consuming logs
 
