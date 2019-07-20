@@ -22,7 +22,7 @@ def my_func(param='ee', *, param2='ff'):
 
 def test():
     my_func(3)
-    my_func('test')
+    my_func(param='test')
     my_func_options('op_param')
 
 

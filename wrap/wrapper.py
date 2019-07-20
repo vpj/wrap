@@ -1,7 +1,9 @@
+import time
 import types
 from pathlib import Path
 from typing import Callable, Optional, Union
 
+from wrap.calls import Calls
 from wrap.definitions import Definition, Definitions
 from wrap.options import Options
 
@@ -14,6 +16,7 @@ class State:
         if not self.log_dir.exists():
             self.log_dir.mkdir(parents=True)
         self.definitions = Definitions(self.log_dir / 'definitions.json')
+        self.calls = Calls(self.log_dir / 'calls.jsonl')
 
 
 state: Optional[State] = None
@@ -49,8 +52,14 @@ class Wrapper:
         self.key = state.definitions.add(self.func, self.options)
 
     def __call__(self, *args, **kwargs):
+        start = time.time()
+        call = state.calls.add(key=self.key, options=self.options,
+                               args=args, kwargs=kwargs,
+                               start=start)
         print(self.options, self.key, ':')
         self.func(*args, **kwargs)
+        end = time.time()
+        state.calls.save(call, end)
 
 
 def wrap(func: Optional[Callable] = None, *,
