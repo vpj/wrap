@@ -13,6 +13,7 @@
 * Log tensor shapes
 * Log simple objects
 * Pickle large objects
+* Handle classes
 
 ### Consuming logs
 
