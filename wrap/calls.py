@@ -34,19 +34,21 @@ class Calls:
         with open(path, "a") as f:
             f.write(json.dumps(call.json()) + '\n')
 
+
 def get_arg_info(value, options):
-        info = {}
-        if options.signature:
-            t = type(value)
-            info['type'] = f"{t.__module__}.{t.__name__}"
+    info = {}
+    if options.signature:
+        t = type(value)
+        info['type'] = f"{t.__module__}.{t.__name__}"
 
-        if options.dimensions:
-            if isinstance(value, np.ndarray):
-                info['shape'] = list(value.shape)
-            if isinstance(value, torch.Tensor):
-                info['shape'] = list(value.shape)
+    if options.dimensions:
+        if isinstance(value, np.ndarray):
+            info['shape'] = list(value.shape)
+        if isinstance(value, torch.Tensor):
+            info['shape'] = list(value.shape)
 
-        return info
+    return info
+
 
 class Call:
     def __init__(self, *,
