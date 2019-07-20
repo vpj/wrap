@@ -1,8 +1,12 @@
-from wrap.wrapper import wrap
+from pathlib import Path
+
+from wrap.wrapper import wrap, init_wrap
+
+init_wrap(Path(__file__).parent.parent / 'logs')
 
 
 @wrap
-def my_func(param):
+def my_func(param='ee', *, param2='ff'):
     print(param)
 
 
