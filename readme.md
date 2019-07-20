@@ -8,8 +8,6 @@
 
 ### Logging
 
-* Log function calls (call signature)
-* Type hints using the log
 * Log tensor shapes
 * Log simple objects
 * Pickle large objects
@@ -18,6 +16,7 @@
 ### Consuming logs
 
 * Find outlier call signatures
+* Suggets type hints
 * Analyse time spent
 * Create test data
 * Document examples
