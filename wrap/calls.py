@@ -1,6 +1,4 @@
 import json
-import random
-import string
 from pathlib import Path
 from typing import Dict, Any, List, Union, Tuple
 
@@ -23,11 +21,15 @@ class Calls:
                     start=start)
         return call
 
-    def save(self, call: 'Call', end: float):
+    def save(self, options: Options, call: 'Call', end: float, ret: Any):
         call.end = end
+        call.ret = get_arg_info(ret, options)
         path = str(self.path)
         with open(path, "a") as f:
             f.write(json.dumps(call.json()) + '\n')
+
+
+PRIMITIVE_TYPES = {int, float}
 
 
 def get_arg_info(value, options):
@@ -42,6 +44,16 @@ def get_arg_info(value, options):
         if isinstance(value, torch.Tensor):
             info['shape'] = list(value.shape)
 
+    if options.primitive_values:
+        if type(value) in PRIMITIVE_TYPES:
+            info['value'] = value
+        if type(value) is str:
+            if len(value) <= options.strings_limit:
+                info['value'] = value
+            else:
+                info['value'] = value[:options.strings_limit]
+                info['len'] = len(value)
+
     return info
 
 
@@ -55,12 +67,14 @@ class Call:
         self.end = -1
         self.args = [get_arg_info(a, options) for a in args]
         self.kwargs = {k: get_arg_info(v, options) for k, v in kwargs.items()}
+        self.ret = None
 
     def json(self):
         data = dict(key=self.key,
                     start=self.start,
                     end=self.end,
                     args=self.args,
-                    kwargs=self.kwargs)
+                    kwargs=self.kwargs,
+                    ret=self.ret)
 
         return data

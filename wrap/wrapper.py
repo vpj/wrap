@@ -57,16 +57,17 @@ class Wrapper:
 
     def __call__(self, *args, **kwargs):
         if not self.should_log():
-            self.func(*args, **kwargs)
+            return self.func(*args, **kwargs)
 
         start = time.time()
         call = state.calls.add(key=self.key, options=self.options,
                                args=args, kwargs=kwargs,
                                start=start)
         print(self.options, self.key, ':')
-        self.func(*args, **kwargs)
+        ret = self.func(*args, **kwargs)
         end = time.time()
-        state.calls.save(call, end)
+        state.calls.save(self.options, call, end, ret)
+        return ret
 
     def should_log(self):
         self._counter += 1
@@ -74,8 +75,10 @@ class Wrapper:
         if self._log_next > self._counter:
             return False
 
-        self._log_next = math.floor(self._counter + (1 + self._skip))
+        self._log_next = math.floor(self._counter + 1 + self._skip)
         self._skip = self._skip * self.options.skip_multiplier
+
+        return True
 
 
 def wrap(func: Optional[Callable] = None, *,

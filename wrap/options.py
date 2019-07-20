@@ -25,7 +25,7 @@ class Options:
         self.add_key = False
         # Log primitive values such as ints, floats, strings etc
         self.primitive_values = True
-        # Log lists/tuples of primitives with only few values
+        # Log lists/tuples/dicts of primitives with only few values
         self.list_limit = 5
         # Log only short strings
         self.strings_limit = 10
