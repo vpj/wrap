@@ -10,12 +10,12 @@ class Options:
 
         # Log call signature
         self.signature = signature
+        # Log dimensions if they are tensors
+        self.dimensions = True
 
         # These are more like TODO items
         # Add ids to wrappers so that we can identify them as code changes
         self.add_key = False
-        # Log dimensions if they are tensors
-        self.dimensions = True
         # Log every nth call
         self.skip = 0
         # Log every log_skip * multiplier, we exponentially increase the skip

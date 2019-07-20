@@ -4,6 +4,9 @@ import string
 from pathlib import Path
 from typing import Dict, Any, List
 
+import numpy as np
+import torch
+
 from wrap.options import Options
 
 
@@ -31,6 +34,19 @@ class Calls:
         with open(path, "a") as f:
             f.write(json.dumps(call.json()) + '\n')
 
+def get_arg_info(value, options):
+        info = {}
+        if options.signature:
+            t = type(value)
+            info['type'] = f"{t.__module__}.{t.__name__}"
+
+        if options.dimensions:
+            if isinstance(value, np.ndarray):
+                info['shape'] = list(value.shape)
+            if isinstance(value, torch.Tensor):
+                info['shape'] = list(value.shape)
+
+        return info
 
 class Call:
     def __init__(self, *,
@@ -40,24 +56,14 @@ class Call:
         self.key = key
         self.start = start
         self.end = -1
-        if options.signature:
-            self.arg_types = [self.get_type(a) for a in args]
-            self.kwargs_types = {k: self.get_type(v) for k, v in kwargs.items()}
-        else:
-            self.arg_types = None
-            self.kwargs_types = None
-
-    @staticmethod
-    def get_type(value: Any) -> str:
-        t = type(value)
-        return f"{t.__module__}.{t.__name__}"
+        self.args = [get_arg_info(a, options) for a in args]
+        self.kwargs = {k: get_arg_info(v, options) for k, v in kwargs.items()}
 
     def json(self):
         data = dict(key=self.key,
                     start=self.start,
-                    end=self.end)
-        if self.arg_types is not None:
-            data['arg_types'] = self.arg_types
-            data['kwarg_types'] = self.kwargs_types
+                    end=self.end,
+                    args=self.args,
+                    kwargs=self.kwargs)
 
         return data
