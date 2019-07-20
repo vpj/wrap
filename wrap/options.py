@@ -48,3 +48,6 @@ class Options:
         for k in self._options:
             if self.__getattribute__(k) is None:
                 self.__setattr__(k, opt.__getattribute__(k))
+
+    def __repr__(self):
+        return f"signature={self.signature}"

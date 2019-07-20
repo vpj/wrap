@@ -6,7 +6,7 @@ def my_func(param):
     print(param)
 
 
-@wrap()
+@wrap(signature=False)
 def my_func_options(param):
     print(param)
 
