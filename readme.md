@@ -8,8 +8,9 @@
 
 ### Logging
 
+* Logging options profiles e.g. `@wrap('frequent')`
 * Log lists/tuples/dicts
-* Pickle large objects
+* Pickle objects
 * Handle classes
 * Handle async functions
 
