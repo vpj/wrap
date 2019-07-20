@@ -1,4 +1,5 @@
 import types
+from typing import Callable, Optional
 
 from wrap.options import Options
 
@@ -24,32 +25,10 @@ class Wrapper:
         self.func(*args, **kwargs)
 
 
-def wrap(*args, **kwargs):
-    print(args)
-    print(kwargs)
-    assert len(args) > 0
-
-    if isinstance(args[0], types.FunctionType):
-        return Wrapper(args[0], default_options)
+def wrap(func: Optional[Callable]=None, *,
+         signature: Optional[bool] = None):
+    if func is not None:
+        if isinstance(func, types.FunctionType):
+            return Wrapper(func, default_options)
     else:
-        return Wrapping(args[0])
-
-
-@wrap
-def my_func(param):
-    print(param)
-
-
-@wrap(Options())
-def my_func_options(param):
-    print(param)
-
-
-def test():
-    my_func(3)
-    my_func('test')
-    my_func_options('op_param')
-
-
-if __name__ == '__main__':
-    test()
+        return Wrapping(Options(signature=signature))
