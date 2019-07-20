@@ -8,7 +8,7 @@
 
 ### Logging
 
-* Log tensor shapes
+* Log frequency
 * Log simple objects
 * Pickle large objects
 * Handle classes
