@@ -24,6 +24,16 @@ def my_func(param: Any = 'ee', *, param2: Any = 'ff'):
     print(param)
 
 
+@wrap(skip=5)
+def my_skip(idx: int):
+    print(idx)
+
+
+@wrap(skip=1, skip_multiplier=2)
+def my_skip_multi(idx: int):
+    print(idx)
+
+
 def test():
     my_func(3)
     my_func(param='test')
@@ -31,6 +41,12 @@ def test():
     my_func(np.zeros((25, 3)))
     my_func(torch.tensor(np.ones((2, 3, 4))))
     my_func(param2=torch.tensor(np.ones((2, 3, 4))))
+
+    for i in range(20):
+        my_skip(i)
+
+    for i in range(100):
+        my_skip_multi(i)
 
 
 if __name__ == '__main__':

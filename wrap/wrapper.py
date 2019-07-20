@@ -1,3 +1,4 @@
+import math
 import time
 import types
 from pathlib import Path
@@ -50,8 +51,14 @@ class Wrapper:
         self.options = options
         self.func = func
         self.key = state.definitions.add(self.func, self.options)
+        self._log_next = 0
+        self._counter = 0
+        self._skip = self.options.skip
 
     def __call__(self, *args, **kwargs):
+        if not self.should_log():
+            self.func(*args, **kwargs)
+
         start = time.time()
         call = state.calls.add(key=self.key, options=self.options,
                                args=args, kwargs=kwargs,
@@ -61,11 +68,26 @@ class Wrapper:
         end = time.time()
         state.calls.save(call, end)
 
+    def should_log(self):
+        self._counter += 1
+
+        if self._log_next > self._counter:
+            return False
+
+        self._log_next = math.floor(self._counter + (1 + self._skip))
+        self._skip = self._skip * self.options.skip_multiplier
+
 
 def wrap(func: Optional[Callable] = None, *,
-         signature: Optional[bool] = None):
+         signature: Optional[bool] = None,
+         dimensions: Optional[bool] = None,
+         skip: Optional[float] = None,
+         skip_multiplier: Optional[float] = None):
     if func is not None:
         if isinstance(func, types.FunctionType):
             return Wrapper(func, default_options)
     else:
-        return Wrapping(Options(signature=signature))
+        return Wrapping(Options(signature=signature,
+                                dimensions=dimensions,
+                                skip=skip,
+                                skip_multiplier=skip_multiplier))

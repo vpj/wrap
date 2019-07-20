@@ -5,21 +5,24 @@ from typing import Optional
 class Options:
     def __init__(self, *,
                  key: Optional[str] = None,
-                 signature: Optional[bool] = None):
+                 signature: Optional[bool] = None,
+                 dimensions: Optional[bool] = None,
+                 skip: Optional[float] = None,
+                 skip_multiplier: Optional[float] = None):
         self.key = key
 
         # Log call signature
         self.signature = signature
         # Log dimensions if they are tensors
-        self.dimensions = True
+        self.dimensions = dimensions
+        # Log every nth call
+        self.skip = skip
+        # Log every log_skip * multiplier, we exponentially increase the skip
+        self.skip_multiplier = skip_multiplier
 
         # These are more like TODO items
         # Add ids to wrappers so that we can identify them as code changes
         self.add_key = False
-        # Log every nth call
-        self.skip = 0
-        # Log every log_skip * multiplier, we exponentially increase the skip
-        self.skip_multiplier = 1
         # Log primitive values such as ints, floats, strings etc
         self.primitive_values = True
         # Log lists/tuples of primitives with only few values
@@ -43,7 +46,11 @@ class Options:
 
     @staticmethod
     def default():
-        return Options(key=None, signature=True)
+        return Options(key=None,
+                       signature=True,
+                       dimensions=True,
+                       skip=0,
+                       skip_multiplier=1)
 
     def clone(self):
         return copy.deepcopy(self)

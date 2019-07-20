@@ -2,17 +2,12 @@ import json
 import random
 import string
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union, Tuple
 
 import numpy as np
 import torch
 
 from wrap.options import Options
-
-
-def random_string(length=5):
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(length))
 
 
 class Calls:
@@ -21,7 +16,7 @@ class Calls:
 
     def add(self, *,
             key: str, options: Options,
-            args: List[Any], kwargs: Dict[str, Any],
+            args: Union[List[Any], Tuple], kwargs: Dict[str, Any],
             start: float):
         call = Call(key=key, options=options,
                     args=args, kwargs=kwargs,
